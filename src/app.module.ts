@@ -1,12 +1,15 @@
 import { HttpModule, Module } from "@nestjs/common";
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppController } from "./app.controller";
+import { AppService } from "./app.service";
+import { ScheduleModule } from "@nestjs/schedule";
 
 @Module({
   imports: [
-    HttpModule
+    HttpModule,
+    ScheduleModule.forRoot()
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService]
 })
-export class AppModule {}
+export class AppModule {
+}

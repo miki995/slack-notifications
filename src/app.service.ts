@@ -1,7 +1,6 @@
 import { HttpService, Injectable } from "@nestjs/common";
 import * as admin from "firebase-admin";
 import { Observable } from "rxjs";
-import { IData } from "./models/data.model";
 import { IUser } from "./models/user.model";
 import { IGeneral } from "./models/general.model";
 
@@ -30,12 +29,13 @@ export class AppService {
     this.usersRef = this.db.collection("userbase");
   }
 
-  async getData(): Promise<IData> {
+  async getData(): Promise<IGeneral> {
     // As an admin, the app has access to read and write all data, regardless of Security Rules
-    return {
-      data: (await this.infoRef.get()).data(),
-      users: (await this.usersRef.orderBy("name").get()).docs.map(doc => ({ id: doc.id, ...doc.data() }))
-    };
+    return (await this.infoRef.get()).data();
+  };
+
+  async getUsers(): Promise<IUser[]> {
+    return (await this.usersRef.orderBy("name").get()).docs.map(doc => ({ id: doc.id, ...doc.data() }));
   };
 
   async updateDoc(user: IUser, active: boolean) {
@@ -46,7 +46,7 @@ export class AppService {
   sendMessageToSlack(data: IGeneral, user: IUser, global?: boolean): Observable<any> {
 
     const url = global ? data.slackWebHookUrl : user.slackWebHookUrl;
-    const text = global ? `Danasnji sretni dobitnik je ${user.name}  ${user.surname}: ${data.message}. Jubilej broj: ${user.funFact}, cestitamo.` : `Vi ste danas srecni dobitnik, bacili ste smece: ${user.funFact} puta, cestitamo, samo tako nastavite :D .`;
+    const text = global ? `Today's lucky winner is ${user.name} ${user.surname} : ${data.message}. So far, cleaned: ${user.funFact} times, congrats.` : `You are lucky winner today, you cleaned: ${user.funFact} times, congrats, keep it like that :D .`;
     const slackObject = { text };
     const body = `payload=${JSON.stringify(slackObject)}`;
 
