@@ -1,8 +1,8 @@
 export interface IGeneral {
-  days: string[];
+  days: number[];
   fancyMessages: string[];
-  hour: string;
+  hours: number[];
   message: string;
-  minute: string;
+  minute: number;
   slackWebHookUrl: string;
 }
