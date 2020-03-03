@@ -43,13 +43,13 @@ export class AppService {
     await this.usersRef.doc(user.id).update({ active, funFact });
   }
 
-  sendMessageToSlack(data: IGeneral, user: IUser, global?: boolean): Observable<any> {
+  sendMessageToSlack(data: IGeneral, user: IUser, global?: boolean): Promise<any> {
 
     const url = global ? data.slackWebHookUrl : user.slackWebHookUrl;
     const text = global ? `Today's lucky winner is ${user.name} ${user.surname} : ${data.message}. So far, cleaned: ${user.funFact} times, congrats.` : `You are lucky winner today, you cleaned: ${user.funFact} times, congrats, keep it like that :D .`;
     const slackObject = { text };
     const body = `payload=${JSON.stringify(slackObject)}`;
 
-    return this.httpService.post(url, body, this.options);
+    return this.httpService.post(url, body, this.options).toPromise();
   }
 }
