@@ -15,7 +15,7 @@ export class AppController {
   }
 
   @Get()
-  getHello() {
+  runApp() {
     this.runNotifications();
   }
 
@@ -32,30 +32,26 @@ export class AppController {
     );
   }
 
-  getUsers(data: IGeneral) {
-    this.appService.getUsers().then((res: IUser[]) => {
+  async getUsers(data: IGeneral) {
+    const users: IUser[] = await this.appService.getUsers();
+    const usersLength = users.length - 1;
+    const userIndex = users.findIndex(user => user.active);
+    const user = users[userIndex];
+    const nextUserIndex = (userIndex === usersLength) ? 0 : userIndex + 1;
+    const nextUser = users[nextUserIndex];
 
-      const users: IUser[] = res;
-      const usersLength = users.length - 1;
-      const userIndex = users.findIndex(user => user.active);
-      const user = users[userIndex];
-      const nextUserIndex = (userIndex === usersLength) ? 0 : userIndex + 1;
-      const nextUser = users[nextUserIndex];
-
-      this.sendMessages(data, user, nextUser);
-    });
+    this.sendMessages(data, user);
+    this.updateUsers(user, nextUser);
   }
 
-  sendMessages(data: IGeneral, user: IUser, nextUser: IUser) {
-    this.appService.sendMessageToSlack(data, user, true).subscribe(res => res);
-    this.appService.sendMessageToSlack(data, user).subscribe((res) => {
+  async sendMessages(data: IGeneral, user: IUser) {
 
-      if (!res) {
-        return;
-      }
+    await this.appService.sendMessageToSlack(data, user, true);
+    await this.appService.sendMessageToSlack(data, user);
+  }
 
-      this.appService.updateDoc(user, false).then(res => res);
-      this.appService.updateDoc(nextUser, true).then(res => res);
-    });
+  async updateUsers(user: IUser, nextUser: IUser) {
+    await this.appService.updateDoc(user, false);
+    await this.appService.updateDoc(nextUser, true);
   }
 }
