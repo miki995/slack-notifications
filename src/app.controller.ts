@@ -1,5 +1,5 @@
 import { Controller, Get } from "@nestjs/common";
-import { SchedulerRegistry } from "@nestjs/schedule";
+import { CronExpression, SchedulerRegistry } from "@nestjs/schedule";
 import { AppService } from "./app.service";
 import { IGeneral } from "./models/general.model";
 import { IUser } from "./models/user.model";
@@ -24,7 +24,7 @@ export class AppController {
 
         const data: IGeneral = res;
         const cronExpression = `${data.minute} ${data.hours.join(",")} * * ${data.days.join(",")}`;
-        const job = new CronJob(cronExpression, () => this.getUsers(data));
+        const job = new CronJob(CronExpression.EVERY_10_SECONDS, () => this.getUsers(data));
 
         this.schedulerRegistry.addCronJob(`slack-notifications`, job);
         job.start();
@@ -55,3 +55,4 @@ export class AppController {
     await this.appService.updateDoc(nextUser, true);
   }
 }
+/*https://hooks.slack.com/services/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*/

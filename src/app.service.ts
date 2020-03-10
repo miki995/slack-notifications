@@ -46,7 +46,7 @@ export class AppService {
   sendMessageToSlack(data: IGeneral, user: IUser, global?: boolean): Promise<any> {
 
     const url = global ? data.slackWebHookUrl : user.slackWebHookUrl;
-    const text = global ? `Today's lucky winner is ${user.name} ${user.surname} : ${data.message}. So far, cleaned: ${user.funFact} times, congrats.` : `You are lucky winner today, you cleaned: ${user.funFact} times, congrats, keep it like that :D .`;
+    const text = global ? `<!channel> \n Today's lucky winner :trophy: is \n \n  :bouquet: *${user.name} ${user.surname}* :bouquet:. \n \n Assignement \n \n :put_litter_in_its_place: :  ${data.message}. \n \n   -------------------------------------------- \n  |     So far, :recycle: :      |  *${user.funFact}*  | :hourglass_flowing_sand: , :congratulations:        | \n   -------------------------------------------- \n` : `You are lucky winner today, you cleaned: ${user.funFact} times, congrats, keep it like that :D .`;
     const slackObject = { text };
     const body = `payload=${JSON.stringify(slackObject)}`;
 
